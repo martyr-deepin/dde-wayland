@@ -23,11 +23,12 @@ public:
     explicit DShellSurfaceManager(QWaylandCompositor *compositor = nullptr);
     ~DShellSurfaceManager();
 
+    void unregisterShellSurface(DShellSurface *surface);
+
     static const struct wl_interface *interface();
     static QByteArray interfaceName();
 
 Q_SIGNALS:
-    void surfaceRequested(QWaylandSurface *surface, uint id, const QWaylandResource &resource);
     void surfaceCreated(DShellSurface *surface);
 
 private:
@@ -42,10 +43,10 @@ class DShellSurface : public QWaylandShellSurfaceTemplate<DShellSurface>
     Q_OBJECT
     Q_DECLARE_PRIVATE(DShellSurface)
 public:
-    explicit DShellSurface(DShellSurfaceManager *manager, QWaylandSurface *surface, uint id, const QWaylandResource &resource);
+    explicit DShellSurface(DShellSurfaceManager *manager, wl_resource *resource, uint id);
     ~DShellSurface();
 
-    QWaylandSurface *surface() const;
+    struct ::wl_resource *resource() const;
     uint id() const;
     void setGeometry(const QRect &rect);
     QVariant property(const QString &name) const;

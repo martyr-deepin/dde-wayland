@@ -22,7 +22,7 @@ Description: DDE wayland client library
 
 Package: libdde-waylandclient-dev
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-waylandclient( =${binary:Version})
 Description: DDE wayland client library
  include header files.
 
@@ -35,6 +35,6 @@ Description: DDE wayland server library
 
 Package: libdde-waylandserver-dev
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-waylandserver( =${binary:Version})
 Description: DDE wayland server library
  include header files.

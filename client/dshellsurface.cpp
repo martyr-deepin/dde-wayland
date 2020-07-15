@@ -4,6 +4,7 @@
 #include <QWindow>
 #include <QGuiApplication>
 #include <QWaylandClientExtensionTemplate>
+#include <QPlatformSurfaceEvent>
 #include <qpa/qplatformnativeinterface.h>
 
 static inline struct ::wl_surface *getWlSurface(QWindow *window)
@@ -20,6 +21,24 @@ public:
         , q_ptr(qq)
     {
 
+    }
+
+    bool eventFilter(QObject *watched, QEvent *event) override
+    {
+        if (event->type() == QEvent::PlatformSurface) {
+            auto pe = static_cast<QPlatformSurfaceEvent*>(event);
+
+            if (pe->surfaceEventType() == QPlatformSurfaceEvent::SurfaceCreated) {
+                if (QWindow *w = qobject_cast<QWindow*>(watched)) {
+                    Q_Q(DShellSurfaceManager);
+                    q->registerWindow(w);
+                }
+
+                watched->removeEventFilter(this);
+            }
+        }
+
+        return false;
     }
 
     DShellSurfaceManager *q_ptr;
@@ -50,10 +69,10 @@ public:
     }
     virtual void dde_shell_surface_property(const QString &name, wl_array *value)
     {
-        const QByteArray data(static_cast<char*>(value->data), value->size * 4);
+        const QByteArray data(static_cast<char *>(value->data), value->size * 4);
         QDataStream ds(data);
         QVariant vv;
-        ds << vv;
+        ds >> vv;
         properies[name] = vv;
 
         Q_Q(DShellSurface);
@@ -67,7 +86,6 @@ public:
         ds << value;
         QtWayland::dde_shell_surface::set_property(name, data);
     }
-
 
     DShellSurface *q_ptr;
     QRect geometry;
@@ -91,24 +109,37 @@ DShellSurface *DShellSurfaceManager::ensureShellSurface(wl_surface *surface)
 {
     Q_D(DShellSurfaceManager);
     auto dde_surface = d->get_surface(surface);
-    return new DShellSurface(*new DShellSurfacePrivate(dde_surface));
+    auto s = new DShellSurface(*new DShellSurfacePrivate(dde_surface));
+    Q_EMIT surfaceCreated(s);
+
+    return s;
 }
 
 DShellSurface *DShellSurfaceManager::registerWindow(QWindow *window)
 {
+    Q_D(DShellSurfaceManager);
+
+    if (!d->isActive()) {
+        connect(d, &DShellSurfaceManagerPrivate::activeChanged, this, [this, d, window] {
+            Q_ASSERT_X(d->isActive(), "DShellSurfaceManager::registerWindow", "The surface manager is not active.");
+            registerWindow(window);
+        });
+
+        return nullptr;
+    }
+
     if (window->handle()) {
         return ensureShellSurface(getWlSurface(window));
     }
 
     // watch the window surface created
-    window->installEventFilter(this);
+    d->installEventFilter(this);
 
     return nullptr;
 }
 
 DShellSurface::~DShellSurface()
 {
-
 }
 
 QVariant DShellSurface::property(const QString &name) const
@@ -117,7 +148,7 @@ QVariant DShellSurface::property(const QString &name) const
 
     if (!d->properies.contains(name)) {
         // request get property
-        const_cast<DShellSurfacePrivate*>(d)->get_property(name);
+        const_cast<DShellSurfacePrivate *>(d)->get_property(name);
         return QVariant();
     }
 
@@ -143,8 +174,14 @@ QRect DShellSurface::geometry() const
     Q_D(const DShellSurface);
 
     if (!d->geometry.isValid()) {
-        const_cast<DShellSurfacePrivate*>(d)->get_geometry();
+        const_cast<DShellSurfacePrivate *>(d)->get_geometry();
     }
 
     return d->geometry;
+}
+
+QVariantMap DShellSurface::properties() const
+{
+    Q_D(const DShellSurface);
+    return d->properies;
 }

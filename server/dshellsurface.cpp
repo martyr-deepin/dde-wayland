@@ -4,6 +4,15 @@
 #include <QtWaylandCompositor/QWaylandSurface>
 #include <QtWaylandCompositor/QWaylandCompositor>
 #include <QtWaylandCompositor/QWaylandResource>
+#include <QCoreApplication>
+
+class FakeQWaylandObject : public QWaylandObject
+{
+public:
+    FakeQWaylandObject() : QWaylandObject() {}
+};
+
+Q_GLOBAL_STATIC(FakeQWaylandObject, _d_placeholderContainer)
 
 class DShellSurfaceManagerPrivate : public QtWaylandServer::dde_surface_manager
 {
@@ -16,28 +25,13 @@ public:
 
     void dde_surface_manager_get_surface(Resource *resource, uint32_t id, struct ::wl_resource *surfaceResource) override
     {
+        Q_UNUSED(surfaceResource)
         Q_Q(DShellSurfaceManager);
-        QWaylandSurface *surface = QWaylandSurface::fromResource(surfaceResource);
 
-        if (ddeSurfaces.contains(id)) {
-            wl_resource_post_error(resource->handle, WL_DISPLAY_ERROR_INVALID_OBJECT,
-                                   "Given id, %d, is already assigned to wl_surface@%d", id,
-                                   wl_resource_get_id(ddeSurfaces[id]->surface()->resource()));
-            return;
-        }
-
-        if (!surface->setRole(DShellSurface::role(), resource->handle, 1))
-            return;
-
-        QWaylandResource ddeSurfaceResource(wl_resource_create(resource->client(), &dde_shell_surface_interface,
-                                                               wl_resource_get_version(resource->handle), id));
-
-        emit q->surfaceRequested(surface, id, ddeSurfaceResource);
-
-        DShellSurface *dddSurface = DShellSurface::fromResource(ddeSurfaceResource.resource());
+        DShellSurface *dddSurface = DShellSurface::fromResource(resource->handle);
 
         if (!dddSurface)
-            dddSurface = new DShellSurface(q, surface, id, ddeSurfaceResource);
+            dddSurface = new DShellSurface(q, resource->handle, id);
 
         ddeSurfaces.insert(id, dddSurface);
 
@@ -51,7 +45,8 @@ public:
 };
 
 DShellSurfaceManager::DShellSurfaceManager(wl_display *display)
-    : d_ptr(new DShellSurfaceManagerPrivate(this))
+    : QWaylandCompositorExtensionTemplate(_d_placeholderContainer)
+    , d_ptr(new DShellSurfaceManagerPrivate(this))
 {
     d_ptr->display = display;
 }
@@ -66,6 +61,12 @@ DShellSurfaceManager::DShellSurfaceManager(QWaylandCompositor *compositor)
 DShellSurfaceManager::~DShellSurfaceManager()
 {
 
+}
+
+void DShellSurfaceManager::unregisterShellSurface(DShellSurface *surface)
+{
+    Q_D(DShellSurfaceManager);
+    d->ddeSurfaces.remove(surface->id());
 }
 
 const wl_interface *DShellSurfaceManager::interface()
@@ -100,8 +101,9 @@ void DShellSurfaceManager::initialize()
 class DShellSurfacePrivate : public QtWaylandServer::dde_shell_surface
 {
 public:
-    DShellSurfacePrivate(DShellSurface *qq)
-        : q_ptr(qq)
+    DShellSurfacePrivate(DShellSurface *qq, wl_client *client, int id, int version)
+        : dde_shell_surface(client, id, version)
+        , q_ptr(qq)
     {
 
     }
@@ -119,7 +121,7 @@ public:
         const QByteArray data(static_cast<char*>(value->data), value->size * 4);
         QDataStream ds(data);
         QVariant vv;
-        ds << vv;
+        ds >> vv;
         properies[name] = vv;
 
         Q_EMIT q_func()->propertyChanged(name, vv);
@@ -127,6 +129,13 @@ public:
     void dde_shell_surface_get_property(Resource *resource, const QString &name) override
     {
         send_property(resource, name, properies[name]);
+    }
+
+    void dde_shell_surface_destroy_resource(Resource *resource) override
+    {
+        Q_UNUSED(resource);
+        Q_Q(DShellSurface);
+        manager->unregisterShellSurface(q);
     }
 
     void send_property(Resource *resource, const QString &name, const QVariant &value)
@@ -144,7 +153,6 @@ public:
 
     DShellSurface *q_ptr;
     DShellSurfaceManager *manager = nullptr;
-    QWaylandSurface *surface = nullptr;
     uint id = 0;
     QRect geometry;
     QVariantMap properies;
@@ -156,17 +164,14 @@ public:
 
 QWaylandSurfaceRole DShellSurfacePrivate::s_role("dde-shell-surface");
 
-DShellSurface::DShellSurface(DShellSurfaceManager *manager, QWaylandSurface *surface, uint id, const QWaylandResource &resource)
-    : QWaylandShellSurfaceTemplate(surface)
-    , d_ptr(new DShellSurfacePrivate(this))
+DShellSurface::DShellSurface(DShellSurfaceManager *manager, wl_resource *resource, uint id)
+    : QWaylandShellSurfaceTemplate(_d_placeholderContainer)
+    , d_ptr(new DShellSurfacePrivate(this, resource->client, id, 1))
 {
     Q_D(DShellSurface);
 
     d->manager = manager;
-    d->surface = surface;
     d->id = id;
-
-    d->init(resource.resource());
 
     emit surfaceChanged();
     emit idChanged();
@@ -177,10 +182,10 @@ DShellSurface::~DShellSurface()
 
 }
 
-QWaylandSurface *DShellSurface::surface() const
+wl_resource *DShellSurface::resource() const
 {
     Q_D(const DShellSurface);
-    return d->surface;
+    return d->resource()->handle;
 }
 
 uint DShellSurface::id() const

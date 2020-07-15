@@ -37,6 +37,7 @@ public:
     ~DShellSurface();
 
     QRect geometry() const;
+    QVariantMap properties() const;
     QVariant property(const QString &name) const;
     void setProperty(const QString &name, const QVariant &value);
 

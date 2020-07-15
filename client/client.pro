@@ -6,7 +6,7 @@ QT += waylandclient gui-private
 QT.waylandclient.uses -= wayland-client wayland-cursor
 
 CONFIG += wayland-scanner
-CONFIG += c++11
+CONFIG += c++11 create_pc create_prl no_install_prl
 
 WAYLANDCLIENTSOURCES += \
     ../protocol/dde-shell.xml
@@ -17,6 +17,7 @@ HEADERS += \
 SOURCES += \
     dshellsurface.cpp
 
+isEmpty(VERSION): VERSION = 0.0.1
 isEmpty(PREFIX): PREFIX = /usr
 
 isEmpty(LIB_INSTALL_DIR) {
