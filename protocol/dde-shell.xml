@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocol name="dde_shell">
+
+    <copyright><![CDATA[
+     Copyright (C) 2020 ~ 2020 Deepin Technology Co., Ltd.
+
+     Author:     zccrs <zccrs@live.com>
+     Maintainer: zccrs <zhangjide@deepin.com>
+
+     This program is free software: you can redistribute it and/or modify
+     it under the terms of the GNU General Public License as published by
+     the Free Software Foundation, either version 3 of the License, or
+     any later version.
+
+     This program is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU General Public License for more details.
+
+     You should have received a copy of the GNU General Public License
+     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    ]]></copyright>
+
+    <interface name="dde_surface_manager" version="1">
+
+      <description summary="get shell surface info">
+        Eg: window position.
+      </description>
+
+      <request name="get_surface">
+        <description summary="get a dde surface of the surface">
+          the dde surface contains window geometry interface.
+        </description>
+
+        <arg name="id" type="new_id" interface="dde_shell_surface"/>
+        <arg name="surface" type="object" interface="wl_surface"/>
+      </request>
+
+    </interface>
+
+    <interface name="dde_shell_surface" version="1">
+
+      <description summary="dde shell surface">
+
+      </description>
+
+      <request name="get_geometry">
+        <description summary="request get the window geometry">
+          reques windo geometry, will notify by "geometry" event.
+        </description>
+      </request>
+
+      <request name="set_property">
+        <description summary="set a property of window">
+          the property value is json format string.
+        </description>
+
+        <arg name="name" type="string" summary="property name"/>
+        <arg name="value" type="array" summary="property value"/>
+      </request>
+
+      <request name="get_property">
+        <description summary="request get a property of window">
+          the property value is json format string.
+        </description>
+
+        <arg name="name" type="string" summary="property name"/>
+      </request>
+
+      <event name="geometry">
+        <description summary="notify geometry changed">
+          Send event on the window geometry changed
+        </description>
+
+        <arg name="x" type="int" summary="x pos"/>
+        <arg name="y" type="int" summary="y pos"/>
+        <arg name="w" type="int" summary="width"/>
+        <arg name="h" type="int" summary="height"/>
+      </event>
+
+      <event name="property">
+        <description summary="notify property changed">
+          Send event on the window property changed
+        </description>
+
+        <arg name="name" type="string" summary="property name"/>
+        <arg name="value" type="array" summary="property value"/>
+      </event>
+
+    </interface>
+
+</protocol>

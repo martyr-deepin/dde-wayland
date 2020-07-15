@@ -1,0 +1,40 @@
+Source: dde-wayland
+Section: devel
+Priority: optional
+Maintainer: Deepin Packages Builder <packages@deepin.com>
+Build-Depends:
+ debhelper (>=9),
+ qt5-default,
+ qtbase5-dev,
+ qtbase5-private-dev,
+ libqt5waylandclient5-dev,
+ libqt5waylandcompositor5-dev, 
+ qtwayland5-dev-tools,
+ pkg-config
+Standards-Version: 3.9.8
+
+Package: libdde-waylandclient
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: DDE wayland client library
+ with DDE custom protocol.
+
+Package: libdde-waylandclient-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: DDE wayland client library
+ include header files.
+
+Package: libdde-waylandserver
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: DDE wayland server library
+ with DDE custom protocol.
+
+Package: libdde-waylandserver-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: DDE wayland server library
+ include header files.

@@ -1,0 +1,5 @@
+dde-wayland (1.0.0) unstable; urgency=medium
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Deepin Packages Builder <packages@deepin.com>  Wed, 15 Jul 2020 13:10:02 +0800
