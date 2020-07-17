@@ -12,6 +12,7 @@ Build-Depends:
  qtwayland5-dev-tools,
  qtdeclarative5-dev,
  libwayland-bin,
+ libwayland-dev,
  pkg-config
 Standards-Version: 3.9.8
 
