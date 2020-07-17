@@ -46,10 +46,11 @@ class DShellSurface : public QWaylandShellSurfaceTemplate<DShellSurface>
     Q_OBJECT
     Q_DECLARE_PRIVATE(DShellSurface)
 public:
-    explicit DShellSurface(DShellSurfaceManager *manager, wl_resource *resource, uint id);
+    explicit DShellSurface(DShellSurfaceManager *manager, wl_resource *resource, wl_resource *surfaceResource, uint id);
     ~DShellSurface();
 
     struct ::wl_resource *resource() const;
+    wl_resource *surfaceResource() const;
     uint id() const;
     void setGeometry(const QRect &rect);
     QVariant property(const QString &name) const;
