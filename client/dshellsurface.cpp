@@ -7,6 +7,8 @@
 #include <QPlatformSurfaceEvent>
 #include <qpa/qplatformnativeinterface.h>
 
+namespace DWaylandClient {
+
 static inline struct ::wl_surface *getWlSurface(QWindow *window)
 {
     void *surf = QGuiApplication::platformNativeInterface()->nativeResourceForWindow("surface", window);
@@ -184,4 +186,6 @@ QVariantMap DShellSurface::properties() const
 {
     Q_D(const DShellSurface);
     return d->properies;
+}
+
 }

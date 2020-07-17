@@ -12,6 +12,9 @@ QT_END_NAMESPACE
 
 struct wl_display;
 struct wl_resource;
+
+namespace DWaylandServer {
+
 class DShellSurface;
 class DShellSurfaceManagerPrivate;
 class DShellSurfaceManager : public QWaylandCompositorExtensionTemplate<DShellSurfaceManager>
@@ -67,5 +70,7 @@ private:
 
     QScopedPointer<DShellSurfacePrivate> d_ptr;
 };
+
+} // DWaylandServer
 
 #endif // DSHELLSURFACE_H

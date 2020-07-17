@@ -8,6 +8,9 @@ class QWindow;
 QT_END_NAMESPACE
 
 struct wl_surface;
+
+namespace DWaylandClient {
+
 class DShellSurface;
 class DShellSurfaceManagerPrivate;
 class DShellSurfaceManager : public QObject
@@ -52,5 +55,7 @@ private:
     QScopedPointer<DShellSurfacePrivate> d_ptr;
     friend class DShellSurfaceManager;
 };
+
+} // DWaylandClient
 
 #endif // DSHELLSURFACE_H

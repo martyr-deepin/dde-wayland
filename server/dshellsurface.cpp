@@ -6,6 +6,8 @@
 #include <QtWaylandCompositor/QWaylandResource>
 #include <QCoreApplication>
 
+namespace DWaylandServer {
+
 class FakeQWaylandObject : public QWaylandObject
 {
 public:
@@ -246,4 +248,6 @@ DShellSurface *DShellSurface::fromResource(wl_resource *resource)
 void DShellSurface::initialize()
 {
     QWaylandShellSurfaceTemplate::initialize();
+}
+
 }
