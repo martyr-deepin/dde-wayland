@@ -2,6 +2,7 @@ TARGET = dde-wayland-server
 TEMPLATE = lib
 
 QT += waylandcompositor
+QT -= quick qml
 # for QTBUG-63384
 QT.waylandcompositor.uses -= wayland-server
 
