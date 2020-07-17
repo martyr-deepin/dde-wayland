@@ -10,6 +10,7 @@ Build-Depends:
  libqt5waylandclient5-dev,
  libqt5waylandcompositor5-dev, 
  qtwayland5-dev-tools,
+ qtdeclarative5-dev,
  pkg-config
 Standards-Version: 3.9.8
 
