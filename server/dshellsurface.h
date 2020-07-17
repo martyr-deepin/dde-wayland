@@ -26,8 +26,6 @@ public:
     explicit DShellSurfaceManager(QWaylandCompositor *compositor = nullptr);
     ~DShellSurfaceManager();
 
-    void unregisterShellSurface(DShellSurface *surface);
-
     static const struct wl_interface *interface();
     static QByteArray interfaceName();
 

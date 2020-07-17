@@ -35,13 +35,15 @@ public:
         if (!dddSurface)
             dddSurface = new DShellSurface(q, resource->handle, surfaceResource, id);
 
-        ddeSurfaces.insert(id, dddSurface);
-
         emit q->surfaceCreated(dddSurface);
     }
 
+    void dde_surface_manager_destroy_resource(Resource *resource) override
+    {
+        Q_UNUSED(resource)
+    }
+
     wl_display *display = nullptr;
-    QHash<uint, DShellSurface*> ddeSurfaces;
     DShellSurfaceManager *q_ptr;
     Q_DECLARE_PUBLIC(DShellSurfaceManager)
 };
@@ -63,12 +65,6 @@ DShellSurfaceManager::DShellSurfaceManager(QWaylandCompositor *compositor)
 DShellSurfaceManager::~DShellSurfaceManager()
 {
 
-}
-
-void DShellSurfaceManager::unregisterShellSurface(DShellSurface *surface)
-{
-    Q_D(DShellSurfaceManager);
-    d->ddeSurfaces.remove(surface->id());
 }
 
 const wl_interface *DShellSurfaceManager::interface()
@@ -135,9 +131,9 @@ public:
 
     void dde_shell_surface_destroy_resource(Resource *resource) override
     {
-        Q_UNUSED(resource);
+        Q_UNUSED(resource)
         Q_Q(DShellSurface);
-        manager->unregisterShellSurface(q);
+        q->deleteLater();
     }
 
     void send_property(Resource *resource, const QString &name, const QVariant &value)
@@ -183,7 +179,6 @@ DShellSurface::DShellSurface(DShellSurfaceManager *manager, wl_resource *resourc
 
 DShellSurface::~DShellSurface()
 {
-
 }
 
 wl_resource *DShellSurface::resource() const

@@ -18,7 +18,7 @@ class DShellSurfaceManager : public QObject
     Q_OBJECT
     Q_DECLARE_PRIVATE(DShellSurfaceManager)
 public:
-    explicit DShellSurfaceManager();
+    explicit DShellSurfaceManager(QObject *parent = nullptr);
     ~DShellSurfaceManager();
 
     DShellSurface *ensureShellSurface(struct ::wl_surface *surface);
@@ -39,6 +39,9 @@ class DShellSurface : public QObject
 public:
     ~DShellSurface();
 
+    struct ::wl_surface *surface() const;
+    QWindow *window() const;
+
     QRect geometry() const;
     QVariantMap properties() const;
     QVariant property(const QString &name) const;
@@ -49,11 +52,13 @@ Q_SIGNALS:
     void propertyChanged(const QString &name, const QVariant &value);
 
 protected:
-    DShellSurface(DShellSurfacePrivate &dd);
+    DShellSurface(DShellSurfacePrivate &dd, QObject *parent);
 
 private:
     QScopedPointer<DShellSurfacePrivate> d_ptr;
+    using QObject::setParent;
     friend class DShellSurfaceManager;
+    friend class DShellSurfaceManagerPrivate;
 };
 
 } // DWaylandClient
