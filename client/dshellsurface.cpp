@@ -12,7 +12,7 @@ namespace DWaylandClient {
 
 static inline struct ::wl_surface *getWlSurface(QWindow *window)
 {
-    void *surf = QGuiApplication::platformNativeInterface()->nativeResourceForWindow("surface", window);
+    static void *surf = QGuiApplication::platformNativeInterface()->nativeResourceForWindow("surface", window);
     return static_cast<struct ::wl_surface *>(surf);
 }
 
@@ -114,7 +114,7 @@ DShellSurfaceManager::DShellSurfaceManager(QObject *parent)
     : QObject(parent)
     , d_ptr(new DShellSurfaceManagerPrivate(this))
 {
-
+    connect(d_ptr.data(), &DShellSurfaceManagerPrivate::activeChanged, this, &DShellSurfaceManager::activeChanged);
 }
 
 DShellSurfaceManager::~DShellSurfaceManager()
@@ -123,9 +123,18 @@ DShellSurfaceManager::~DShellSurfaceManager()
     d->surfaceMap.clear();
 }
 
+bool DShellSurfaceManager::isActive() const
+{
+    Q_D(const DShellSurfaceManager);
+    return d->isActive();
+}
+
 DShellSurface *DShellSurfaceManager::ensureShellSurface(wl_surface *surface)
 {
     Q_D(DShellSurfaceManager);
+
+    if (!d->isActive())
+        return nullptr;
 
     if (auto s = d->surfaceMap.value(surface)) {
         return s;

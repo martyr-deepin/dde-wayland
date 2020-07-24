@@ -21,11 +21,14 @@ public:
     explicit DShellSurfaceManager(QObject *parent = nullptr);
     ~DShellSurfaceManager();
 
+    bool isActive() const;
+
     DShellSurface *ensureShellSurface(struct ::wl_surface *surface);
     Q_INVOKABLE DShellSurface *registerWindow(QWindow *window);
 
 Q_SIGNALS:
     void surfaceCreated(DShellSurface *surface);
+    void activeChanged();
 
 private:
     QScopedPointer<DShellSurfaceManagerPrivate> d_ptr;
