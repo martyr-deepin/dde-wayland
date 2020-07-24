@@ -211,9 +211,21 @@ QVariant DShellSurface::property(const QString &name) const
     return d->properies[name];
 }
 
+static bool qvariantComparison(const QVariant &v1, const QVariant &v2)
+{
+    if (v1.type() != v2.type())
+        return false;
+
+    return v1 == v2;
+}
+
 void DShellSurface::setProperty(const QString &name, const QVariant &value)
 {
     Q_D(DShellSurface);
+
+    if (qvariantComparison(d->properies.value(name), value)) {
+        return;
+    }
 
     d->properies[name] = value;
     d->set_property(name, value);
