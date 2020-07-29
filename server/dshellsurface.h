@@ -59,10 +59,14 @@ public:
     static QWaylandSurfaceRole *role();
     static DShellSurface *fromResource(struct ::wl_resource *resource);
 
+public Q_SLOTS:
+    void sendSignal(const QString &name, const QVariant &value);
+
 Q_SIGNALS:
     void surfaceChanged();
     void idChanged();
     void propertyChanged(const QString &name, const QVariant &value);
+    void notify(const QString &name, const QVariant &value);
 
 private:
     void initialize() override;

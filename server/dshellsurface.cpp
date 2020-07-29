@@ -7,6 +7,8 @@
 #include <QCoreApplication>
 #include <QDebug>
 
+#define SIGNAL_PREFIX "__DWAYLAND_SIGNAL_"
+
 namespace DWaylandServer {
 
 class FakeQWaylandObject : public QWaylandObject
@@ -120,9 +122,16 @@ public:
         QDataStream ds(data);
         QVariant vv;
         ds >> vv;
-        properies[name] = vv;
 
-        Q_EMIT q_func()->propertyChanged(name, vv);
+        Q_Q(DShellSurface);
+
+        // 处理信号通知
+        if (Q_UNLIKELY(name.startsWith(SIGNAL_PREFIX))) {
+            Q_EMIT q->notify(name.mid(strlen(SIGNAL_PREFIX)), vv);
+        } else {
+            properies[name] = vv;
+            Q_EMIT q->propertyChanged(name, vv);
+        }
     }
     void dde_shell_surface_get_property(Resource *resource, const QString &name) override
     {
@@ -258,6 +267,14 @@ DShellSurface *DShellSurface::fromResource(wl_resource *resource)
     if (!surfaceResource)
         return nullptr;
     return static_cast<DShellSurfacePrivate *>(surfaceResource->dde_shell_surface_object)->q_func();
+}
+
+void DShellSurface::sendSignal(const QString &name, const QVariant &value)
+{
+    Q_D(DShellSurface);
+
+    // 以特殊名称的属性模拟信号发送，此属性不会记录在属性map中，且不能被get，只是借用属性的通知行为
+    d->send_property(QStringLiteral(SIGNAL_PREFIX) + name, value);
 }
 
 void DShellSurface::initialize()

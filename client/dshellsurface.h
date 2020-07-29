@@ -50,9 +50,13 @@ public:
     QVariant property(const QString &name) const;
     void setProperty(const QString &name, const QVariant &value);
 
+public Q_SLOTS:
+    void sendSignal(const QString &name, const QVariant &value);
+
 Q_SIGNALS:
     void geometryChanged(const QRect &rect);
     void propertyChanged(const QString &name, const QVariant &value);
+    void notify(const QString &name, const QVariant &value);
 
 protected:
     DShellSurface(DShellSurfacePrivate &dd, QObject *parent);

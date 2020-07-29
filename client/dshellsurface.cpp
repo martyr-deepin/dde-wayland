@@ -8,6 +8,8 @@
 #include <QPlatformSurfaceEvent>
 #include <qpa/qplatformnativeinterface.h>
 
+#define SIGNAL_PREFIX "__DWAYLAND_SIGNAL_"
+
 namespace DWaylandClient {
 
 static inline struct ::wl_surface *getWlSurface(QWindow *window)
@@ -44,10 +46,16 @@ public:
         QDataStream ds(data);
         QVariant vv;
         ds >> vv;
-        properies[name] = vv;
 
         Q_Q(DShellSurface);
-        Q_EMIT q->propertyChanged(name, vv);
+
+        // 处理信号通知
+        if (Q_UNLIKELY(name.startsWith(SIGNAL_PREFIX))) {
+            Q_EMIT q->notify(name.mid(strlen(SIGNAL_PREFIX)), vv);
+        } else {
+            properies[name] = vv;
+            Q_EMIT q->propertyChanged(name, vv);
+        }
     }
 
     void set_property(const QString &name, const QVariant &value)
@@ -229,6 +237,14 @@ void DShellSurface::setProperty(const QString &name, const QVariant &value)
 
     d->properies[name] = value;
     d->set_property(name, value);
+}
+
+void DShellSurface::sendSignal(const QString &name, const QVariant &value)
+{
+    Q_D(DShellSurface);
+
+    // 以特殊名称的属性模拟信号发送，此属性不会记录在属性map中，且不能被get，只是借用属性的通知行为
+    d->set_property(QStringLiteral(SIGNAL_PREFIX) + name, value);
 }
 
 DShellSurface::DShellSurface(DShellSurfacePrivate &dd, QObject *parent)
