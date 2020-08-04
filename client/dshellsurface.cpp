@@ -139,6 +139,9 @@ bool DShellSurfaceManager::isActive() const
 
 DShellSurface *DShellSurfaceManager::ensureShellSurface(wl_surface *surface)
 {
+    if (!surface)
+        return nullptr;
+
     Q_D(DShellSurfaceManager);
 
     if (!d->isActive())
@@ -159,7 +162,7 @@ DShellSurface *DShellSurfaceManager::registerWindow(QWindow *window)
     Q_D(DShellSurfaceManager);
 
     if (!d->isActive()) {
-        connect(d, &DShellSurfaceManagerPrivate::activeChanged, this, [this, d, window] {
+        connect(d, &DShellSurfaceManagerPrivate::activeChanged, window, [this, d, window] {
             Q_ASSERT_X(d->isActive(), "DShellSurfaceManager::registerWindow", "The surface manager is not active.");
             registerWindow(window);
         });
