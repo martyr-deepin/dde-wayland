@@ -7,6 +7,8 @@
 #include <QCoreApplication>
 #include <QDebug>
 
+#include <wayland-server.h>
+
 #define SIGNAL_PREFIX "__DWAYLAND_SIGNAL_"
 
 namespace DWaylandServer {

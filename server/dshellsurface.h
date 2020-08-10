@@ -47,6 +47,16 @@ public:
     explicit DShellSurface(DShellSurfaceManager *manager, wl_resource *resource, wl_resource *surfaceResource, uint id);
     ~DShellSurface();
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+#if QT_CONFIG(wayland_compositor_quick)
+    QWaylandQuickShellIntegration *createIntegration(QWaylandQuickShellSurfaceItem *item) override { return nullptr; }
+#endif
+#else
+#ifdef QT_WAYLAND_COMPOSITOR_QUICK
+    QWaylandQuickShellIntegration *createIntegration(QWaylandQuickShellSurfaceItem *item) override { return nullptr; }
+#endif
+#endif
+
     struct ::wl_resource *resource() const;
     wl_resource *surfaceResource() const;
     uint id() const;
