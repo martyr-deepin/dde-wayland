@@ -41,9 +41,3 @@ target_wrapper.*
 
 # QtCreator CMake
 CMakeLists.txt.user*
-
-bin
-cmake
-DtkGuis
-dtkgui_config.h
-qt_lib_dtkgui.pri
