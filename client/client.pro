@@ -32,6 +32,9 @@ isEmpty(INCLUDE_INSTALL_DIR) {
     includes.path = $$INCLUDE_INSTALL_DIR
 }
 
+INCLUDEPATH += /usr/include/wayland
+LIBS += -L$$LIB_INSTALL_DIR -lwayland-client
+
 includes.files += \
     $$PWD/dshellsurface.h
 
