@@ -66,6 +66,11 @@ public:
         QtWayland::dde_shell_surface::set_property(name, data);
     }
 
+    void requestActivate()
+    {
+        QtWayland::dde_shell_surface::request_activate();
+    }
+
     DShellSurface *q_ptr;
     QRect geometry;
     QVariantMap properies;
@@ -240,6 +245,13 @@ void DShellSurface::setProperty(const QString &name, const QVariant &value)
 
     d->properies[name] = value;
     d->set_property(name, value);
+}
+
+void DShellSurface::requestActivate()
+{
+    Q_D(DShellSurface);
+
+    d->requestActivate();
 }
 
 void DShellSurface::sendSignal(const QString &name, const QVariant &value)

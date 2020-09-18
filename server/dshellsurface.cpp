@@ -135,9 +135,18 @@ public:
             Q_EMIT q->propertyChanged(name, vv);
         }
     }
+
     void dde_shell_surface_get_property(Resource *resource, const QString &name) override
     {
         send_property(resource, name, properies[name]);
+    }
+
+    virtual void dde_shell_surface_request_activate(Resource *resource) override
+    {
+        Q_UNUSED(resource)
+        Q_Q(DShellSurface);
+
+        Q_EMIT q->activationRequested();
     }
 
     void dde_shell_surface_destroy_resource(Resource *resource) override

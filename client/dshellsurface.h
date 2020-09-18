@@ -49,6 +49,7 @@ public:
     QVariantMap properties() const;
     QVariant property(const QString &name) const;
     void setProperty(const QString &name, const QVariant &value);
+    void requestActivate();
 
 public Q_SLOTS:
     void sendSignal(const QString &name, const QVariant &value);

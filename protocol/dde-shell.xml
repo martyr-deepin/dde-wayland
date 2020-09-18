@@ -87,6 +87,12 @@
         <arg name="value" type="array" summary="property value"/>
       </event>
 
+      <request name="request_activate">
+        <description summary="request to activate shell">
+            request to activate current shell if it's not active
+        </description>
+      </request>
+
     </interface>
 
 </protocol>

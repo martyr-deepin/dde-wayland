@@ -77,6 +77,7 @@ Q_SIGNALS:
     void idChanged();
     void propertyChanged(const QString &name, const QVariant &value);
     void notify(const QString &name, const QVariant &value);
+    void activationRequested();
 
 private:
     void initialize() override;
