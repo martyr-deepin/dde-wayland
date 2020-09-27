@@ -178,6 +178,9 @@ DShellSurface *DShellSurfaceManager::registerWindow(QWindow *window)
     if (window->handle()) {
         auto surface = getWlSurface(window);
 
+        if (!surface)
+            return nullptr;
+
         if (auto s = d->surfaceMap.value(surface)) {
             return s;
         }
