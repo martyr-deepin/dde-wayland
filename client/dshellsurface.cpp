@@ -12,9 +12,9 @@
 
 namespace DWaylandClient {
 
-static inline struct ::wl_surface *getWlSurface(QWindow *window)
+inline struct ::wl_surface *getWlSurface(QWindow *window)
 {
-    static void *surf = QGuiApplication::platformNativeInterface()->nativeResourceForWindow("surface", window);
+    void *surf = QGuiApplication::platformNativeInterface()->nativeResourceForWindow("surface", window);
     return static_cast<struct ::wl_surface *>(surf);
 }
 
