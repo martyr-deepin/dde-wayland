@@ -188,7 +188,7 @@ DShellSurface *DShellSurfaceManager::registerWindow(QWindow *window)
         auto s = d->createShellSurface(surface);
         s->d_ptr->window = window;
         // 跟随窗口销毁
-        connect(window, &QWindow::destroy, s, &DShellSurface::deleteLater);
+        connect(window, &QWindow::destroyed, s, &DShellSurface::deleteLater);
         Q_EMIT surfaceCreated(s);
     }
 
