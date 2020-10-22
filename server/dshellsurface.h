@@ -78,6 +78,7 @@ Q_SIGNALS:
     void propertyChanged(const QString &name, const QVariant &value);
     void notify(const QString &name, const QVariant &value);
     void activationRequested();
+    void surfaceDestroyed();
 
 private:
     void initialize() override;

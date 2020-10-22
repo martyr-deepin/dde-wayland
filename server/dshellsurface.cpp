@@ -153,7 +153,7 @@ public:
     {
         Q_UNUSED(resource)
         Q_Q(DShellSurface);
-        q->deleteLater();
+        Q_EMIT q->surfaceDestroyed();
     }
 
     void send_property(Resource *resource, const QString &name, const QVariant &value)
