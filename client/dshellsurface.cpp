@@ -156,10 +156,8 @@ DShellSurface *DShellSurfaceManager::ensureShellSurface(wl_surface *surface)
         return s;
     }
 
-    auto s = d->createShellSurface(surface);
-    Q_EMIT surfaceCreated(s);
-
-    return s;
+    //如果没有找到surface,应该返回空,由registerWindow创建
+    return nullptr;
 }
 
 DShellSurface *DShellSurfaceManager::registerWindow(QWindow *window)
