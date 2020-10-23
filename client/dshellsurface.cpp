@@ -173,7 +173,9 @@ DShellSurface *DShellSurfaceManager::registerWindow(QWindow *window)
         return nullptr;
     }
 
-    if (window->handle()) {
+     // TODO: window可能是野指针, 调用handle会引起崩溃,暂时用if(1)替代
+//    if (window->handle()) {
+    if (1) {
         auto surface = getWlSurface(window);
 
         if (!surface)
