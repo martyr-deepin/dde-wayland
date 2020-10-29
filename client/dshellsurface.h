@@ -27,7 +27,7 @@ public:
     Q_INVOKABLE DShellSurface *registerWindow(QWindow *window);
 
 Q_SIGNALS:
-    void surfaceCreated(DShellSurface *surface);
+    void surfaceCreated(DShellSurface *surface, QWindow *window);
     void activeChanged();
 
 private:

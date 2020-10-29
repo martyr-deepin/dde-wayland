@@ -190,7 +190,7 @@ DShellSurface *DShellSurfaceManager::registerWindow(QWindow *window)
         // 跟随窗口销毁
         //暂时注释掉
         //connect(window, &QWindow::destroyed, s, &DShellSurface::deleteLater);
-        Q_EMIT surfaceCreated(s);
+        Q_EMIT surfaceCreated(s, window);
     }
 
     // watch the window surface created
